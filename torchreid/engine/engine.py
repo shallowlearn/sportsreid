@@ -16,7 +16,6 @@ from torchreid.utils import (
 )
 from torchreid.losses import DeepSupervision
 
-
 class Engine(object):
     r"""A generic base Engine class for both image- and video-reid.
 
@@ -26,7 +25,7 @@ class Engine(object):
         use_gpu (bool, optional): use gpu. Default is True.
     """
 
-    def __init__(self, datamanager, use_gpu=True):
+    def __init__(self, datamanager, use_gpu=True, warmup_steps=0):
         self.datamanager = datamanager
         self.train_loader = self.datamanager.train_loader
         self.test_loader = self.datamanager.test_loader
@@ -37,6 +36,7 @@ class Engine(object):
         self.model = None
         self.optimizer = None
         self.scheduler = None
+        self.lr_use_warmup = warmup_steps > 0
 
         self._models = OrderedDict()
         self._optims = OrderedDict()
@@ -110,6 +110,17 @@ class Engine(object):
         for name in names:
             if self._scheds[name] is not None:
                 self._scheds[name].step()
+
+    def step_update_lr(self, names=None, num_updates=0):
+        names = self.get_model_names(names)
+
+        for name in names:
+            if self._scheds[name] is not None:
+                if num_updates <= self.warmup_steps:
+                    # Increase lr linearly ourself
+                    lr = self.warmup_lr + ((self.lr - self.warmup_lr)*float(num_updates) / float(max(1, self.warmup_steps)))
+                    for param_group in self._optims[name].param_groups:
+                        param_group['lr'] = lr
 
     def run(
         self,
@@ -187,6 +198,7 @@ class Engine(object):
         print('=> Start training')
 
         for self.epoch in range(self.start_epoch, self.max_epoch):
+
             self.train(
                 print_freq=print_freq,
                 fixbase_epoch=fixbase_epoch,
@@ -241,6 +253,7 @@ class Engine(object):
 
         self.num_batches = len(self.train_loader)
         end = time.time()
+        num_updates = self.epoch*len(self.train_loader)
         for self.batch_idx, data in enumerate(self.train_loader):
             data_time.update(time.time() - end)
             loss_summary = self.forward_backward(data)
@@ -283,7 +296,14 @@ class Engine(object):
                     'Train/lr', self.get_current_lr(), n_iter
                 )
 
+            if self.lr_use_warmup:
+                num_updates += 1
+                self.step_update_lr(num_updates=num_updates)
+
             end = time.time()
+
+        if self.lr_use_warmup and num_updates <= self.warmup_steps:
+            return
 
         self.update_lr()
 
@@ -444,11 +464,14 @@ class Engine(object):
             print("Couldn't compute CMC and mAP because of hidden identity labels.")
             return None, None
 
-    def compute_loss(self, criterion, outputs, targets):
+    def compute_loss(self, criterion, outputs, targets, epoch=None):
         if isinstance(outputs, (tuple, list)):
             loss = DeepSupervision(criterion, outputs, targets)
         else:
-            loss = criterion(outputs, targets)
+            if epoch is None:
+                loss = criterion(outputs, targets)
+            else:
+                loss = criterion(outputs, targets, epoch)
         return loss
 
     def extract_features(self, input):

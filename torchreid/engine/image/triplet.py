@@ -67,23 +67,40 @@ class ImageTripletEngine(Engine):
         margin=0.3,
         weight_t=1,
         weight_x=1,
+        weight_tc=0,
+        weight_cc=0,
         scheduler=None,
         use_gpu=True,
-        label_smooth=True
+        label_smooth=True,
+        topk = 1,
+        bottomk = 1,
+        warmup_lr=0.0,
+        warmup_steps=0,
+        lr=0.0003
     ):
-        super(ImageTripletEngine, self).__init__(datamanager, use_gpu)
+        super(ImageTripletEngine, self).__init__(datamanager, use_gpu, warmup_steps)
 
         self.model = model
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.register_model('model', model, optimizer, scheduler)
+        self.lr_use_warmup = warmup_steps > 0
+        self.warmup_lr = warmup_lr
+        self.warmup_steps = warmup_steps
+        self.lr = lr
 
         assert weight_t >= 0 and weight_x >= 0
         assert weight_t + weight_x > 0
         self.weight_t = weight_t
         self.weight_x = weight_x
+        self.weight_tc = weight_tc
+        self.weight_cc = weight_cc
 
-        self.criterion_t = TripletLoss(margin=margin)
+        self.criterion_t = TripletLoss(margin=margin,
+                                       num_instances=datamanager.num_instances,
+                                       dim=model.module.feature_dim,
+                                       topk=topk,
+                                       bottomk=bottomk)
         self.criterion_x = CrossEntropyLoss(
             num_classes=self.datamanager.num_train_pids,
             use_gpu=self.use_gpu,
@@ -102,9 +119,14 @@ class ImageTripletEngine(Engine):
         loss = 0
         loss_summary = {}
 
-        if self.weight_t > 0:
-            loss_t = self.compute_loss(self.criterion_t, features, pids)
+        if self.weight_t > 0 or self.weight_tc > 0 or self.weight_cc > 0:
+            loss_t, loss_tc, loss_cc = self.compute_loss(self.criterion_t, features, pids, epoch=self.epoch)
+            # triplet loss
             loss += self.weight_t * loss_t
+            # centroid triplet loss
+            loss += self.weight_tc * loss_tc
+            # Loss from intra and other class distances
+            loss += self.weight_cc * loss_cc
             loss_summary['loss_t'] = loss_t.item()
 
         if self.weight_x > 0:

@@ -22,6 +22,9 @@ from .resnet_ibn_b import *
 from .shufflenetv2 import *
 from .inceptionresnetv2 import *
 
+from .vit import *
+from .deit import *
+
 __model_factory = {
     # image classification models
     'resnet18': resnet18,
@@ -74,7 +77,21 @@ __model_factory = {
     'osnet_ain_x1_0': osnet_ain_x1_0,
     'osnet_ain_x0_75': osnet_ain_x0_75,
     'osnet_ain_x0_5': osnet_ain_x0_5,
-    'osnet_ain_x0_25': osnet_ain_x0_25
+    'osnet_ain_x0_25': osnet_ain_x0_25,
+    'vit_b_16': vit_b_16,
+    'vit_b_32': vit_b_32,
+    'vit_l_16': vit_l_16,
+    'vit_l_32': vit_l_32,
+    'deit_b_16': deit_b_16,
+    'deit_t_16': deit_t_16,
+    'deit_s_16': deit_s_16,
+    'deit_bd_16': deit_bd_16,
+    'deit_td_16': deit_td_16,
+    'deit_sd_16': deit_sd_16,
+    'deit_bd_16_384': deit_bd_16_384,
+    'deit_h_14_ls': deit_h_14_ls,
+    'deit_l_16_ls': deit_l_16_ls,
+    'deit_b_16_ls': deit_b_16_ls,
 }
 
 
@@ -89,7 +106,7 @@ def show_avai_models():
 
 
 def build_model(
-    name, num_classes, loss='softmax', pretrained=True, use_gpu=True
+    name, num_classes, loss='softmax', pretrained=True, use_gpu=True, **kwargs,
 ):
     """A function wrapper for building a model.
 
@@ -118,5 +135,6 @@ def build_model(
         num_classes=num_classes,
         loss=loss,
         pretrained=pretrained,
-        use_gpu=use_gpu
+        use_gpu=use_gpu,
+        **kwargs
     )

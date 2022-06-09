@@ -180,7 +180,7 @@ class ImageDataManager(DataManager):
         market1501_500k=False,
         soccernetv3_training_subset=1.0,
     ):
-
+        self.num_instances = num_instances
         super(ImageDataManager, self).__init__(
             sources=sources,
             targets=targets,

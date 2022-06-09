@@ -311,7 +311,13 @@ class ResNet(nn.Module):
         for dim in fc_dims:
             layers.append(nn.Linear(input_dim, dim))
             layers.append(nn.BatchNorm1d(dim))
-            layers.append(nn.ReLU(inplace=True))
+            '''
+            We noticed that consistently across networks,
+            removing this last RELU is useful. Otherwise
+            the feature vectors are constrained to be
+            positive.
+            '''
+            #layers.append(nn.ReLU(inplace=True))
             if dropout_p is not None:
                 layers.append(nn.Dropout(p=dropout_p))
             input_dim = dim

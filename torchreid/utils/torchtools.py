@@ -119,7 +119,19 @@ def resume_from_checkpoint(fpath, model, optimizer=None, scheduler=None):
     """
     print('Loading checkpoint from "{}"'.format(fpath))
     checkpoint = load_checkpoint(fpath)
-    model.load_state_dict(checkpoint['state_dict'])
+    if torch.cuda.is_available():
+        newcheckpoint = checkpoint
+    else:
+        # Handle the extra 'module.' in the keyname
+        # if we are loading cuda model into cpu
+        newcheckpoint = {'state_dict':{}}
+        for key in checkpoint['state_dict']:
+            if key[:7] == 'module.':
+                newcheckpoint['state_dict'][key[7:]] = checkpoint['state_dict'][key]
+            else:
+                newcheckpoint['state_dict'][key] = checkpoint['state_dict'][key]
+
+    model.load_state_dict(newcheckpoint['state_dict'])
     print('Loaded model weights')
     if optimizer is not None and 'optimizer' in checkpoint.keys():
         optimizer.load_state_dict(checkpoint['optimizer'])

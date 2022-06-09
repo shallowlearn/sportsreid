@@ -44,9 +44,16 @@ def build_engine(cfg, datamanager, model, optimizer, scheduler):
                 margin=cfg.loss.triplet.margin,
                 weight_t=cfg.loss.triplet.weight_t,
                 weight_x=cfg.loss.triplet.weight_x,
+                weight_tc=cfg.loss.triplet.weight_tc,
+                weight_cc=cfg.loss.triplet.weight_cc,
                 scheduler=scheduler,
                 use_gpu=cfg.use_gpu,
-                label_smooth=cfg.loss.softmax.label_smooth
+                label_smooth=cfg.loss.softmax.label_smooth,
+                topk=cfg.loss.triplet.topk,
+                bottomk=cfg.loss.triplet.bottomk,
+                warmup_lr = cfg.train.warmup_lr,
+                warmup_steps = cfg.train.warmup_steps,
+                lr = cfg.train.lr
             )
 
     else:
@@ -147,7 +154,7 @@ def main():
     print('** System info **\n{}\n'.format(collect_env_info()))
 
     if cfg.use_gpu:
-        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.benchmark = False #For reproducibility
 
     datamanager = build_datamanager(cfg)
 
@@ -157,7 +164,8 @@ def main():
         num_classes=datamanager.num_train_pids,
         loss=cfg.loss.name,
         pretrained=cfg.model.pretrained,
-        use_gpu=cfg.use_gpu
+        use_gpu=cfg.use_gpu,
+        img_size=(cfg.data.height, cfg.data.width),
     )
     num_params, flops = compute_model_complexity(
         model, (1, 3, cfg.data.height, cfg.data.width)
@@ -171,6 +179,7 @@ def main():
         model = nn.DataParallel(model).cuda()
 
     optimizer = torchreid.optim.build_optimizer(model, **optimizer_kwargs(cfg))
+
     scheduler = torchreid.optim.build_lr_scheduler(
         optimizer, **lr_scheduler_kwargs(cfg)
     )
@@ -185,7 +194,6 @@ def main():
     )
     engine = build_engine(cfg, datamanager, model, optimizer, scheduler)
     engine.run(**engine_run_kwargs(cfg))
-
 
 if __name__ == '__main__':
     main()

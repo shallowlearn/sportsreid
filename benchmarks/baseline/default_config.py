@@ -74,6 +74,10 @@ def get_default_config():
     cfg.train.gamma = 0.1 # learning rate decay multiplier
     cfg.train.print_freq = 20 # print frequency
     cfg.train.seed = 1 # random seed
+    cfg.train.warmup_lr = 0.0 # for training transformers
+    cfg.train.warmup_steps = 0
+    cfg.train.min_lr = 1e-6 # for training transformers
+    cfg.train.warmup_epochs = 0 # for training transformers
 
     # optimizer
     cfg.sgd = CN()
@@ -95,6 +99,10 @@ def get_default_config():
     cfg.loss.triplet.margin = 0.3 # distance margin
     cfg.loss.triplet.weight_t = 1. # weight to balance hard triplet loss
     cfg.loss.triplet.weight_x = 0. # weight to balance cross entropy loss
+    cfg.loss.triplet.weight_tc = 0. # weight to balance centroid triplet loss
+    cfg.loss.triplet.weight_cc = 0. # weight to balance loss from distance between centroids
+    cfg.loss.triplet.topk = 1 #Mine Top k hard negatives
+    cfg.loss.triplet.bottomk = 1 #Mine bottom hard positives
 
     # test
     cfg.test = CN()
