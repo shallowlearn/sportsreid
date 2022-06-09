@@ -2,7 +2,7 @@
 
 Sportsreid is useful for re-identifying the same player in different frames of a broadcast video of a match. This repo is built on top of [SoccerNet Re-Identification](https://github.com/SoccerNet/sn-reid) and the popular [Torchreid](https://github.com/KaiyangZhou/deep-person-reid). It is currently ranked #2 on the test split leaderboard for the SoccerNet 2022 ReIdentification challenge.
 
-** Note to reviewers: At the time of submission of our manuscript, our approach was #1 on the test split leaderboard. Also note that our models are pretrained on only Imagenet. We do not have any such details about the approach that is currently #1 on the leaderboard.**
+**Note to reviewers: At the time of submission of our manuscript, our approach was #1 on the test split leaderboard. Also note that our models are pretrained on only Imagenet. We do not have any such details about the approach that is currently #1 on the leaderboard.**
 
 ## Metrics and Pretrained Models
 
