@@ -15,7 +15,7 @@ Sportsreid is useful for re-identifying the same player in different frames of a
 | ViT-B/16 | 304.4 | 224x224 | 86.0 | 81.5 | [model](https://drive.google.com/file/d/1yoGabayh4yRGkfzBwmBF1ocNiwwo1WVv/view?usp=sharing) |
 | ViT-L/16* | 304.8 | 224x224 | 89.8 | 86.7 | [model](https://drive.google.com/file/d/1NHtpTuCCueA1Q8S5li3y4L3oO9lFvte2/view?usp=sharing) |
 
-The ViT-L/16* model is trained with 5 different random seeds for initialization and then the weights are averaged across these seeds. This is inspired by this [paper](https://arxiv.org/abs/2203.05482).
+The ViT-L/16* model is trained with 5 different random seeds for initialization and then the weights are averaged across these seeds to further increase mAP. This is inspired by this [paper](https://arxiv.org/abs/2203.05482).
 
 ## Installation
 
