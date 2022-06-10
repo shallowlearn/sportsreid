@@ -6,7 +6,7 @@ Sportsreid is useful for re-identifying the same player in different frames of a
 
 ## Metrics and Pretrained Models
 
-| name | #params | Resolution | mAP | rank-1 | url | config |
+| name | #params | Resolution | mAP | rank-1 | chkpt | config |
 | ---  | --- | --- | --- | --- | --- | --- |
 | ResNet50-fc512 | 22.0 | 256x128 | 81.8 | 76.1 | [model](https://drive.google.com/file/d/1o45E8lxB9mxJ1lfSgMpi3mC0zUwVvzgz/view?usp=sharing) | [config](https://drive.google.com/file/d/1CqtCPpn9NSlZ5NMmGUqWfd-fcOOWVyOu/view?usp=sharing) |
 | OSNet_x1_0 | 22.0 | 256x128 | 83.4 | 78.0 | [model](https://drive.google.com/file/d/1To0Ww6_HxU2ITAlb4kQEgYExV-orwit8/view?usp=sharing) | [config](https://drive.google.com/file/d/1xO4Qe7f4FwpXnEe39cn24FdRDg6F-LLu/view?usp=sharing) |
