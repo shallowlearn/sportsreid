@@ -9,7 +9,17 @@ Sportsreid is useful for re-identifying the same player in different frames of a
 
 **Note to reviewers: At the time of submission of our manuscript, our approach was #1 on the test split leaderboard. Also note that our models are pretrained on only Imagenet. We do not have any such details about the approach that is currently #1 on the leaderboard.**
 
-## Metrics and Pretrained Models
+## Hierarchical Sampling
+
+The hierarchical sampler is defined in [torchreid/data/sampler.py](torchreid/data/sampler.py) as [RandomIdentitySampler_Hierarchical](https://github.com/sportsreid/sportsreid/blob/dcd1fccf0d3b2921edfd089d010e9512ff61fe51/torchreid/data/sampler.py#L15). To use it, just set "train_sampler" to "RandomIdentitySampler_Hierarchical" in the yaml config file.
+
+## Centroid loss
+
+The centroid loss is defined in [torchreid/losses/hard_mine_triplet_loss.py](https://github.com/sportsreid/sportsreid/blob/dcd1fccf0d3b2921edfd089d010e9512ff61fe51/torchreid/losses/hard_mine_triplet_loss.py#L91). To use it, set "weight_cc" to a value > 0.0 in the yaml config file.
+
+## Metrics, Pretrained Models and Config Files
+
+We provide trained models and config files for different network architectures in the table below. These models were pretrained on ImageNet and then trained on the train split of the SoccerNet Re-Identification dataset.
 
 | name | #params | Resolution | mAP | rank-1 | chkpt | config |
 | ---  | --- | --- | --- | --- | --- | --- |
@@ -56,6 +66,7 @@ This will automatically download the SoccerNet data as well. If you want to down
 ```
 python benchmarks/baseline/main.py --config-file <path to config yaml file> test.evaluate True model.resume <path to model checkpoint>
 ```
+
 
 
 
