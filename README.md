@@ -43,7 +43,19 @@ conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
 # install sportsreid (don't need to re-build it if you modify the source code)
 python setup.py develop
 ```
+## Training
 
+```
+python benchmarks/baseline/main.py --config-file <path to config yaml file>
+```
+
+This will automatically download the SoccerNet data as well. If you want to download data separately, please look at the SoccerNet [github page](https://github.com/SoccerNet/sn-reid)
+
+## Inference
+
+```
+python benchmarks/baseline/main.py --config-file <path to config yaml file> test.evaluate True model.resume <path to model checkpoint>
+```
 
 
 
