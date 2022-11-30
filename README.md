@@ -1,3 +1,5 @@
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/sports-re-id-improving-re-identification-of/person-re-identification-on-soccernet-v2)](https://paperswithcode.com/sota/person-re-identification-on-soccernet-v2?p=sports-re-id-improving-re-identification-of)
+
 | <img src="https://github.com/sportsreid/sportsreid/blob/main/images/hierarchical_8921.jpg" width="450" height=240>  | | | <img src="https://github.com/sportsreid/sportsreid/blob/main/images/hierarchical_3297.jpg" width="450" height=240>  | 
 |:--:|:--:|:--:|:--:| 
 | *True match is shown with blue border* | | | *True match is shown with blue border* |
